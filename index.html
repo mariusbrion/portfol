@@ -11,41 +11,18 @@
     @layer normalize, base, demo, images, controls, debug, intro;
 
     @layer intro {
-      /* Animation d'introduction (limitée aux 5 premiers éléments pour rester simple) */
-      details:nth-of-type(3) {
+      /* Animation d'introduction (appliquée à toutes les bulles) */
+      details[name=feature] {
+        --from-scale: 0;
+        --from-x: -50px;
+        --from-y: 0;
         animation:
-          slide .75s 0.5s both var(--bounce),
-          start .6s 1.05s var(--bounce) both,
-          color-in .6s 1.25s var(--bounce) both;
+          start .6s calc(0.5s + (var(--index) * 0.08s)) var(--bounce) both,
+          fade-in .6s calc(0.5s + (var(--index) * 0.08s)) var(--bounce) both,
+          slide .6s calc(0.5s + (var(--index) * 0.08s)) var(--bounce) both,
+          color-in .6s calc(0.7s + (var(--index) * 0.08s)) var(--bounce) both;
       }
-      details:nth-of-type(1),
-      details:nth-of-type(2) {
-        --from-y: 75%;
-      }
-      details:nth-of-type(4),
-      details:nth-of-type(5) {
-        --from-y: -75%;
-      }
-      details:nth-of-type(2),
-      details:nth-of-type(4) {
-        --index: 1;
-      }
-      details:nth-of-type(1),
-      details:nth-of-type(5) {
-        --index: 2;
-      }
-      details:nth-of-type(1),
-      details:nth-of-type(2),
-      details:nth-of-type(4),
-      details:nth-of-type(5) {
-        --from-scale: 1;
-        --from-x: 35%;
-        animation:
-          start .6s calc(1.05s + (var(--index) * 0.08s)) var(--bounce) both,
-          fade-in .6s calc(1.05s + (var(--index) * 0.08s)) var(--bounce) both,
-          slide .6s calc(1.05s + (var(--index) * 0.08s)) var(--bounce) both,
-          color-in .6s calc(1.25s + (var(--index) * 0.08s)) var(--bounce) both;
-      }
+     
       @keyframes slide {
         0% {
           scale: var(--from-scale, 0);
@@ -166,12 +143,8 @@
         transition-timing-function: ease-in, var(--ease), var(--bounce);
       }
       
-      /* LOGIQUE D'AFFICHAGE :
-        - Par défaut (rien d'ouvert), le bloc 1 est visible.
-        - Quand details(1) est ouvert, le bloc 2 est visible.
-        - Quand details(2) est ouvert, le bloc 3 est visible.
-        etc.
-      */
+      /* LOGIQUE D'AFFICHAGE : Mise à jour après regroupement des compétences */
+      /* 8 'details' -> 9 'img-block' (le premier étant l'accueil) */
 
       /* États ouverts - Affiche l'image correspondante */
       section:has(details:nth-of-type(1)[open]) .column:last-of-type .img-block:nth-of-type(2),
@@ -181,9 +154,7 @@
       section:has(details:nth-of-type(5)[open]) .column:last-of-type .img-block:nth-of-type(6),
       section:has(details:nth-of-type(6)[open]) .column:last-of-type .img-block:nth-of-type(7),
       section:has(details:nth-of-type(7)[open]) .column:last-of-type .img-block:nth-of-type(8),
-      section:has(details:nth-of-type(8)[open]) .column:last-of-type .img-block:nth-of-type(9),
-      section:has(details:nth-of-type(9)[open]) .column:last-of-type .img-block:nth-of-type(10),
-      section:has(details:nth-of-type(10)[open]) .column:last-of-type .img-block:nth-of-type(11) {
+      section:has(details:nth-of-type(8)[open]) .column:last-of-type .img-block:nth-of-type(9) {
         translate: var(--distance) 0;
         z-index: 2;
         
@@ -211,9 +182,7 @@
       section:not(:has(details:nth-of-type(5)[open])) .column:last-of-type .img-block:nth-of-type(6),
       section:not(:has(details:nth-of-type(6)[open])) .column:last-of-type .img-block:nth-of-type(7),
       section:not(:has(details:nth-of-type(7)[open])) .column:last-of-type .img-block:nth-of-type(8),
-      section:not(:has(details:nth-of-type(8)[open])) .column:last-of-type .img-block:nth-of-type(9),
-      section:not(:has(details:nth-of-type(9)[open])) .column:last-of-type .img-block:nth-of-type(10),
-      section:not(:has(details:nth-of-type(10)[open])) .column:last-of-type .img-block:nth-of-type(11) {
+      section:not(:has(details:nth-of-type(8)[open])) .column:last-of-type .img-block:nth-of-type(9) {
         .img-wrapper {
           transition-property: translate, opacity, scale;
           transition-timing-function: ease-in, ease-out, ease-in;
@@ -226,8 +195,8 @@
       .img-block:nth-of-type(1) .img-wrapper img {
         object-position: calc(50% + 4rem) 50%;
       }
-      .img-block:nth-of-type(2) .img-wrapper img {
-        object-position: right;
+      .img-block:nth-of-type(2) .img-wrapper video { /* Cible la vidéo */
+        object-position: center center;
       }
       
       /* États de transition */
@@ -239,9 +208,7 @@
         &:not(:has(details:nth-of-type(5)[open])) .column:last-of-type .img-block:nth-of-type(6),
         &:not(:has(details:nth-of-type(6)[open])) .column:last-of-type .img-block:nth-of-type(7),
         &:not(:has(details:nth-of-type(7)[open])) .column:last-of-type .img-block:nth-of-type(8),
-        &:not(:has(details:nth-of-type(8)[open])) .column:last-of-type .img-block:nth-of-type(9),
-        &:not(:has(details:nth-of-type(9)[open])) .column:last-of-type .img-block:nth-of-type(10),
-        &:not(:has(details:nth-of-type(10)[open])) .column:last-of-type .img-block:nth-of-type(11) {
+        &:not(:has(details:nth-of-type(8)[open])) .column:last-of-type .img-block:nth-of-type(9) {
           .img-wrapper {
             transform-origin: 50% 100%;
             translate: calc(var(--distance) * -1) 0;
@@ -257,6 +224,20 @@
           opacity: 0;
         }
       }
+
+      /* Style pour les iframes et vidéos */
+      .img-wrapper video,
+      .img-wrapper iframe {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        height: 100%;
+        width: 100cqw;
+        object-fit: cover;
+        border: none;
+      }
+
     }
 
     @layer demo {
@@ -313,10 +294,29 @@
         gap: .5rem;
         z-index: 20;
         flex: 1 0 var(--width);
-        max-height: 80vh;
+        max-height: 90vh; /* Augmenté pour voir plus d'items */
         overflow-y: auto; /* Permet de faire défiler les projets si trop nombreux */
         padding-top: 1rem;
         padding-bottom: 1rem;
+
+        /* Custom Scrollbar */
+        scrollbar-width: thin;
+        scrollbar-color: var(--hover-background) transparent;
+        &::-webkit-scrollbar {
+          width: 8px;
+        }
+        &::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        &::-webkit-scrollbar-thumb {
+          background-color: var(--hover-background);
+          border-radius: 4px;
+          border: 2px solid transparent; /* Crée un effet de padding */
+          background-clip: content-box; /* Assure que la bordure est transparente */
+        }
+        &::-webkit-scrollbar-thumb:hover {
+          background-color: var(--background);
+        }
       }
 
       .column:last-of-type {
@@ -449,6 +449,18 @@
       .content a:hover {
         color: #fff;
       }
+      .content h4 { /* Titre pour les sous-sections de compétences */
+        font-family: 'SF Pro Text', sans-serif, system-ui;
+        font-weight: 700;
+        color: #fff;
+        margin: 1.5rem 1.5rem 0 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--hover-background);
+      }
+      .content .competence-p {
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+      }
     }
 
     @layer base {
@@ -507,6 +519,8 @@
         min-height: 100vh;
         font-family: 'SF Pro Text', 'SF Pro Icons', 'AOS Icons', 'Helvetica Neue',
           Helvetica, Arial, sans-serif, system-ui;
+        margin: 0; /* Assure qu'il n'y a pas de marge */
+        padding: 0; /* Assure qu'il n'y a pas de padding */
       }
 
       /* body::before {
@@ -552,7 +566,7 @@
       <!-- COLONNE 1: CONTENU DU PORTFOLIO -->
       <div class="column">
         <!-- À Propos -->
-        <details name=feature>
+        <details name=feature style="--index: 0;">
           <summary>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -565,7 +579,7 @@
         </details>
         
         <!-- Projet: Calculateur Carbone -->
-        <details name=feature>
+        <details name=feature style="--index: 1;">
           <summary>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -578,7 +592,7 @@
         </details>
 
         <!-- Projet: Cartographie 3D -->
-        <details name=feature>
+        <details name=feature style="--index: 2;">
           <summary>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -586,12 +600,12 @@
             <span>Projet: Cartographie 3D</span>
           </summary>
           <div class="content">  
-            <p>Cartographie 3D des mobilités pendulaires à Châtellerault. Réalisée avec QGIS, Kepler.gl, et geojson.io, elle explore les habitudes domicile-travail en zone périurbaine et l'impact de la localisation des commerces (données 3D IGN) sur les flux. (Vidéo de démo non disponible)</p>
+            <p>Cartographie 3D des mobilités pendulaires à Châtellerault. Réalisée avec QGIS, Kepler.gl, et geojson.io, elle explore les habitudes domicile-travail en zone périurbaine et l'impact de la localisation des commerces (données 3D IGN) sur les flux. (Fichier GIF corrompu, en attente de remplacement).</p>
           </div>
         </details>
         
         <!-- Projet: Analyse CO₂ Europe -->
-        <details name=feature>
+        <details name=feature style="--index: 3;">
           <summary>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -604,7 +618,7 @@
         </details>
         
         <!-- Projet: Lecture Réglementaire (QGIS) -->
-        <details name=feature>
+        <details name=feature style="--index: 4;">
           <summary>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -612,51 +626,32 @@
             <span>Projet: Lecture QGIS</span>
           </summary>
           <div class="content">  
-            <p>Animation QGIS montrant la mobilisation de données (bâti, infrastructures, zones protégées) pour une lecture réglementaire d'un territoire. Intègre des normes du PLU (haies, espaces verts) pour évaluer la faisabilité de projets. (Vidéo de démo non disponible)</p>
+            <p>Animation QGIS montrant la mobilisation de données (bâti, infrastructures, zones protégées) pour une lecture réglementaire d'un territoire. Intègre des normes du PLU (haies, espaces verts) pour évaluer la faisabilité de projets. (Fichier GIF corrompu, en attente de remplacement).</p>
           </div>
         </details>
         
-        <!-- Compétence: Analyse Territoriale -->
-        <details name=feature>
+        <!-- Compétences (Regroupées) -->
+        <details name=feature style="--index: 5;">
           <summary>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
             </svg>
-            <span>Comp: Analyse Territoriale</span>
+            <span>Compétences</span>
           </summary>
           <div class="content">  
-            <p>Intérêt pour l'analyse territoriale fondée sur les sciences humaines (Durkheim) et le design urbain (Jon Lang). Ces lectures nourrissent ma capacité à croiser approches qualitatives (enquêtes) et quantitatives (statistiques, cartos) pour décrypter la complexité des territoires.</p>
+            <h4>Analyse Territoriale</h4>
+            <p class="competence-p">Intérêt pour l'analyse territoriale fondée sur les sciences humaines (Durkheim) et le design urbain (Jon Lang). Ces lectures nourrissent ma capacité à croiser approches qualitatives (enquêtes) et quantitatives (statistiques, cartos) pour décrypter la complexité des territoires.</p>
+            
+            <h4>SIG & Cartographie</h4>
+            <p class="competence-p">Maîtrise de QGIS (géotraitement, analyse spatiale) et Kepler.gl (visualisation). Capable de transformer des données complexes en représentations visuelles claires, comme la carte des inégalités de population dans la Vienne, pour comprendre les enjeux d'équité territoriale.</p>
+            
+            <h4>Langues & Outils</h4>
+            <p class="competence-p" style="padding-bottom: 1.5rem;">Anglais B2+ (C1 à l'oral/écrit certifié Cambridge), Allemand B1, Espagnol B1. Maîtrise de HTML/CSS (ce portfolio), Looker Studio, Google Sheets/Excel (analyse, nettoyage), et QGIS / Kepler.gl pour l'analyse spatiale.</p>
           </div>
         </details>
 
-        <!-- Compétence: SIG & Cartographie -->
-        <details name=feature>
-          <summary>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-            </svg>
-            <span>Comp: SIG & Cartographie</span>
-          </summary>
-          <div class="content">  
-            <p>Maîtrise de QGIS (géotraitement, analyse spatiale) et Kepler.gl (visualisation). Capable de transformer des données complexes en représentations visuelles claires, comme cette carte des inégalités de population dans la Vienne, pour comprendre les enjeux d'équité territoriale.</p>
-          </div>
-        </details>
-        
-        <!-- Compétence: Langues & Outils -->
-        <details name=feature>
-          <summary>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-            </svg>
-            <span>Comp: Langues & Outils</span>
-          </summary>
-          <div class="content">  
-            <p>Anglais B2+ (C1 à l'oral/écrit certifié Cambridge), Allemand B1, Espagnol B1. Maîtrise de HTML/CSS (ce portfolio), Looker Studio, Google Sheets/Excel (analyse, nettoyage), et QGIS / Kepler.gl pour l'analyse spatiale.</p>
-          </div>
-        </details>
-        
         <!-- Expérience: Table Ronde (Festisol) -->
-        <details name=feature>
+        <details name=feature style="--index: 6;">
           <summary>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -669,7 +664,7 @@
         </details>
         
         <!-- Contact & CV -->
-        <details name=feature>
+        <details name=feature style="--index: 7;">
           <summary>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -690,10 +685,12 @@
             <img src="https://placehold.co/800x800/222222/FFFFFF?text=Marius+Brion\n\n%C3%89tudiant+en+Villes\n%26+Territoires+Durables" alt="Accueil Portfolio Marius Brion" />
           </div>
         </div>
-        <!-- Image 2: À Propos -->
+        <!-- Image 2: À Propos (Vidéo) -->
         <div class="img-block">
-          <div class="img-wrapper">
-            <img src="https://placehold.co/800x800/333333/FFFFFF?text=%C3%80+Propos+de+Moi" alt="À Propos de Marius Brion" />
+          <div class="img-wrapper video-wrapper">
+            <video autoplay muted loop preload="auto" playsinline>
+              <source src="https://videos.pexels.com/video-files/20046744/20046744-uhd_3840_2160_60fps.mp4" type="video/mp4">
+            </video>
           </div>
         </div>
         <!-- Image 3: Calculateur Carbone -->
@@ -702,49 +699,38 @@
             <img src="calculateur.png" alt="Projet Calculateur Carbone" />
           </div>
         </div>
-        <!-- Image 4: Cartographie 3D -->
+        <!-- Image 4: Cartographie 3D (Placeholder) -->
         <div class="img-block">
           <div class="img-wrapper">
-            <img src="gif-VEED.gif" alt="Projet Cartographie 3D" />
+            <img src="https://placehold.co/800x800/444444/FFFFFF?text=Projet%3A\nCartographie+3D%0A(gif+cass%C3%A9)" alt="Projet Cartographie 3D" />
           </div>
         </div>
-        <!-- Image 5: Analyse CO₂ Europe -->
+        <!-- Image 5: Analyse CO₂ Europe (Iframe) -->
+        <div class="img-block">
+          <div class="img-wrapper iframe-wrapper">
+            <iframe src="https://lookerstudio.google.com/embed/reporting/88ef1b09-3975-4195-97b4-14f57f97abab/page/0FgHF" sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe>
+          </div>
+        </div>
+        <!-- Image 6: Lecture Réglementaire (QGIS) (Placeholder) -->
         <div class="img-block">
           <div class="img-wrapper">
-            <img src="https://placehold.co/800x800/555555/FFFFFF?text=Projet%3A\nAnalyse+CO%E2%82%82+Europe" alt="Projet Analyse CO2 Europe (Looker Studio)" />
+            <img src="https://placehold.co/800x800/666666/FFFFFF?text=Projet%3A\nLecture+QGIS%0A(gif+cass%C3%A9)" alt="Projet Lecture QGIS" />
           </div>
         </div>
-        <!-- Image 6: Lecture Réglementaire (QGIS) -->
+        <!-- Image 7: Compétences (Regroupées) -->
         <div class="img-block">
           <div class="img-wrapper">
-            <img src="gif-creation-senille-VEED.gif" alt="Projet Lecture QGIS" />
+            <!-- Utilisation d'une des images de compétence comme placeholder -->
+            <img src="urban-typology.jpg" alt="Compétences" /> 
           </div>
         </div>
-        <!-- Image 7: Analyse Territoriale -->
-        <div class="img-block">
-          <div class="img-wrapper">
-            <img src="emile-durkheim.jpg" alt="Compétence Analyse Territoriale" />
-          </div>
-        </div>
-        <!-- Image 8: SIG & Cartographie -->
-        <div class="img-block">
-          <div class="img-wrapper">
-            <img src="cartopopulation.png" alt="Compétence SIG et Cartographie" />
-          </div>
-        </div>
-        <!-- Image 9: Langues & Outils -->
-        <div class="img-block">
-          <div class="img-wrapper">
-            <img src="cambridge_cert_1.jpg" alt="Compétence Langues (Certificat Cambridge)" />
-          </div>
-        </div>
-        <!-- Image 10: Table Ronde (Festisol) -->
+        <!-- Image 8: Table Ronde (Festisol) -->
         <div class="img-block">
           <div class="img-wrapper">
             <img src="table_ronde_1.JPG" alt="Expérience Table Ronde Festisol" />
           </div>
         </div>
-        <!-- Image 11: Contact & CV -->
+        <!-- Image 9: Contact & CV -->
         <div class="img-block">
           <div class="img-wrapper">
             <img src="https://placehold.co/800x800/777777/FFFFFF?text=Contact+%26+CV" alt="Contact et CV" />
@@ -821,18 +807,32 @@
 
     // Gère l'état pour les animations CSS
     const syncState = async () => {
+      // Si aucun 'details' n'est ouvert
       if (!section.matches(':has([open])')) {
         section.dataset.checkingDetails = false;
       } else {
+        // Si un 'details' est ouvert, on attend la fin des animations
         await Promise.allSettled(section.getAnimations({ subtree: true }).map(a => a.finished));
         section.dataset.checkingDetails = true;
       }
     }
 
-    section.addEventListener('toggle', syncState, true);
+    // Écoute les événements 'toggle' sur tous les 'details'
+    section.addEventListener('toggle', (e) => {
+        // Si un 'details' vient de s'ouvrir
+        if (e.target.open) {
+            // Ferme tous les autres 'details' sauf celui qui vient de s'ouvrir
+            detailsElements.forEach(details => {
+                if (details !== e.target) {
+                    details.open = false;
+                }
+            });
+        }
+        // Met à jour l'état pour les animations CSS
+        syncState();
+    }, true);
 
   </script>
 </body>
 </html>
-
 
